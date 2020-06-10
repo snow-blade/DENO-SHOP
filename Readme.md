@@ -16,5 +16,5 @@ $ deno run --allow-net server.ts
 Compile file:///home/free/deno_rest/server.ts
 Server running on port 8000
 ```<br>
-For more awesome deno projects checkout the (official)[https://deno.land/] website of deno
+For more awesome deno projects checkout the [official](https://deno.land/) website of deno
 
