@@ -3,21 +3,21 @@ import { Product } from './types.ts'
 
 let products: Product[] = [
     {
-      id: "1",
-      name: "Product One",
-      description: "This is product one",
+      id: "aed-ff145",
+      name: "Luxury spoon",
+      description: "Buy this if you're not stupid",
       price: 99.99,
     },
     {
-      id: "2",
-      name: "Product Two",
-      description: "This is product two",
+      id: "df74656mf",
+      name: "Collector manga",
+      description: "Yeah, Dragon Ball was never this good before, special in Bujumbura",
       price: 150.99,
     },
     {
-      id: "3",
-      name: "Product Three",
-      description: "This is product three",
+      id: "pml-ff74",
+      name: "A rusted ps2",
+      description: "A luxurious garbage, too expensive for your burundian friends",
       price: 199.99,
     },
   ];
@@ -27,4 +27,71 @@ const getProducts = ({ response }: { response: any }) => {
         data: products
     }
 }
-export {getProducts}
+const getProduct = ({ params, response }: { params: { id: string }, response: any }) => {
+    const product: Product | undefined = products.find(p => p.id === params.id)
+
+    if (product) {
+        response.status = 200
+        response.body = {
+            success: true,
+            data: product
+        }
+    } else {
+        response.status = 404
+        response.body = {
+            success: false,
+            msg: 'No product found'
+        }
+    }
+}
+const addProduct = async ({ request, response }: { request: any, response: any }) => {    
+    const body = await request.body()
+
+    if (!request.hasBody) {
+        response.status = 400
+        response.body = {
+            success: false,
+            msg: 'No data'
+        }
+    } else {
+        const product: Product = body.value
+        product.id = v4.generate()
+        products.push(product)
+        response.status = 201
+        response.body = {
+            success: true,
+            data: product
+        }
+    }
+}
+const updateProduct = async({ params, request, response }: { params: { id: string }, request: any, response: any }) => {
+    const product: Product | undefined = products.find(p => p.id === params.id)
+
+    if (product) {
+        const body = await request.body()
+
+        const updateData: { name?: string; description?: string; price?: number } = body.value
+
+        products = products.map(p => p.id === params.id ? { ...p, ...updateData } : p)
+
+        response.status = 200
+        response.body = {
+            success: true,
+            data: products
+        }
+    } else {
+        response.status = 404
+        response.body = {
+            success: false,
+            msg: 'No product found'
+        }
+    }
+}
+const deleteProduct = ({ params, response }: { params: { id: string }, response: any }) => {
+    products = products.filter(p => p.id !== params.id)
+    response.body = { 
+        success: true,
+        msg: 'Product removed'
+    }
+}
+export {getProducts,addProduct,deleteProduct,updateProduct,getProduct}
